@@ -2,11 +2,36 @@
 @{
     ViewData["Title"] = "Calendar";
 }
-<div class="row" style="margin-left:auto;margin-right:auto; margin-top:20%">
-    @foreach(var x in Model.Items)
+<div class=" row" style="margin-left:10%; margin-top:auto">
+    @if (Model.Month != 1)
+    {
+        <a class="btn btn-primary" asp-controller="Calendar" asp-action="Index"
+           asp-route-year="@Model.Year" asp-route-month="@(Model.Month - 1)">Prew</a>
+    }
+    else
+    {
+        <a class="btn btn-primary" asp-controller="Calendar" asp-action="Index"
+           asp-route-year="@(Model.Year-1)" asp-route-month="12">Prew</a>
+    }
+</div>
+
+<div class="row" style="margin-left:auto;margin-right:auto; margin-top:15%">
+    <div class="card" style="width: 13%; margin-left: auto; margin-right:auto;text-align:center"><h4>Воскресенье</h4></div>
+    <div class="card" style="width: 13%; margin-left: auto; margin-right:auto;text-align:center"><h4>Понедельник</h4></div>
+    <div class="card" style="width: 13%; margin-left: auto; margin-right:auto;text-align:center"><h4>Вторник</h4></div>
+    <div class="card" style="width: 13%; margin-left: auto; margin-right:auto;text-align:center"><h4>Среда</h4></div>
+    <div class="card" style="width: 13%; margin-left: auto; margin-right:auto;text-align:center"><h4>Четверг</h4></div>
+    <div class="card" style="width: 13%; margin-left: auto; margin-right:auto;text-align:center"><h4>Пятница</h4></div>
+    <div class="card" style="width: 13%; margin-left: auto; margin-right:auto;text-align:center"><h4>Субота</h4></div>
+
+    @foreach (var x in Model.Items)
     {
         <div class="card" style="width: 13%; margin-left: auto; margin-right:auto">
-            <h3>@x.Date.Day</h3>
+            <div class="card-body" style="text-align: center">
+                <div class="card-title" style="text-align:right"><h6>@x.TaskCount</h6></div>
+                <a asp-controller="Task" asp-action="Index"
+                   asp-route-year="@x.Date.Year" asp-route-month="@x.Date.Month" asp-route-day="@x.Date.Day">@x.Date.Day</a>
+            </div>
         </div>
     }
 </div>
