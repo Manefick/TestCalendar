@@ -1,9 +1,13 @@
-﻿@{
+﻿@model CalendarModel
+@{
     ViewData["Title"] = "Calendar";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<div class="row" style="margin-left:auto;margin-right:auto; margin-top:20%">
+    @foreach(var x in Model.Items)
+    {
+        <div class="card" style="width: 13%; margin-left: auto; margin-right:auto">
+            <h3>@x.Date.Day</h3>
+        </div>
+    }
 </div>
-<asp:Calender ID="Calendar1" runat="server">
-</asp:Calender>
+

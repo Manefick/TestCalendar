@@ -7,97 +7,100 @@ using TestCalendar.Repositories;
 
 namespace TestCalendar.Services
 {
-	public class CalendarService
-	{
-		private readonly CalendarTaskRepository _calendarTaskRepository;
+    public class CalendarService
+    {
+        private readonly ICalendarTaskRepository _calendarTaskRepository;
 
-		public CalendarService(CalendarTaskRepository calendarTaskRepository)
-		{
-			_calendarTaskRepository = calendarTaskRepository;
-		}
+        public CalendarService(ICalendarTaskRepository calendarTaskRepository)
+        {
+            _calendarTaskRepository = calendarTaskRepository;
+        }
 
-		public CalendarModel GetCalendarItems(int month, int year)
-		{
-			var dates = GetMonthDates(month, year);
-			var calendarTasks = _calendarTaskRepository.Get(dates.First(), dates.Last())
-				.GroupBy(x => x.Date.Date)
-				.Select(x => new 
-				{
-					Date = x.Key,
-					TaskCount = x.Count()
-				});
+        public CalendarModel GetCalendarItems(int month, int year)
+        {
+            var dates = GetMonthDates(month, year);
+            var calendarTasks = _calendarTaskRepository.Get(dates.First(), dates.Last())
+                .GroupBy(x => x.Date.Date)
+                .Select(x => new
+                {
+                    Date = x.Key,
+                    TaskCount = x.Count()
+                });
 
-			return new CalendarModel
-			{
-				Month = month,
-				Year = year,
-				Items = dates.Select(x => new CalendarItemModel
-				{
-					Date = x,
-					TaskCount = calendarTasks.Any(y => y.Date == x.Date.Date)
-					 ? calendarTasks.First(y => y.Date == x.Date.Date).TaskCount
-					 : 0
-				})
-			};
-		}
+            return new CalendarModel
+            {
+                Month = month,
+                Year = year,
+                Items = dates.Select(x =>
+                {
+                    var calendarTask = calendarTasks.FirstOrDefault(y => y.Date == x.Date.Date);
 
-		private List<DateTime> GetMonthDates(int m, int y)
-		{
-			var month = new DateTime(y, m, 1);
-			List<DateTime> result = new List<DateTime> { };
+                    return new CalendarItemModel
+                    {
+                        Date = x,
+                        TaskCount = calendarTask?.TaskCount ?? 0
+                    };
+                })
+            };
+        }
 
-			var padLeftDays = (int)month.DayOfWeek;
-			var currentDay = month;
-			if (m != 1)
-			{
-				var prevMonth = new DateTime(2020, m - 1, 1);
-				int countPrevMonth = DateTime.DaysInMonth(y, m - 1);
-				var prevDay = prevMonth.AddDays(countPrevMonth - padLeftDays);
+        private List<DateTime> GetMonthDates(int m, int y)
+        {
+            var month = new DateTime(y, m, 1);
+            List<DateTime> result = new List<DateTime> { };
 
-				var countMonth = DateTime.DaysInMonth(y, m);
-				var newMonth = new DateTime(y, m, countMonth);
-				var padRaightDays = 6 - (int)newMonth.DayOfWeek;
-				var iterations = DateTime.DaysInMonth(month.Year, month.Month) + padLeftDays + padRaightDays;
-				for (int j = 0; j < iterations; j++)
-				{
-					if (j < padLeftDays)
-					{
-						result.Add(prevDay);
-						prevDay = prevDay.AddDays(1);
-					}
-					else
-					{
-						result.Add(currentDay);
-						currentDay = currentDay.AddDays(1);
-					}
-				}
-			}
-			else
-			{
-				var prevMonth = new DateTime(y - 1, 12, 1);
-				int countPrevMonth = DateTime.DaysInMonth(y - 1, 12);
-				var prevDay = prevMonth.AddDays(countPrevMonth - padLeftDays);
+            var padLeftDays = (int)month.DayOfWeek;
+            var currentDay = month;
+            if (m != 1)
+            {
+                var prevMonth = new DateTime(2020, m - 1, 1);
+                int countPrevMonth = DateTime.DaysInMonth(y, m - 1);
+                var prevDay = prevMonth.AddDays(countPrevMonth - padLeftDays);
 
-				var countMonth = DateTime.DaysInMonth(y, m);
-				var newMonth = new DateTime(y, m, countMonth);
-				var padRaightDays = 6 - (int)newMonth.DayOfWeek;
-				var iterations = DateTime.DaysInMonth(month.Year, month.Month) + padLeftDays + padRaightDays;
-				for (int j = 0; j < iterations; j++)
-				{
-					if (j < padLeftDays)
-					{
-						result.Add(prevDay);
-						prevDay = prevDay.AddDays(1);
-					}
-					else
-					{
-						result.Add(currentDay);
-						currentDay = currentDay.AddDays(1);
-					}
-				}
-			}
+                var countMonth = DateTime.DaysInMonth(y, m);
+                var newMonth = new DateTime(y, m, countMonth);
+                var padRaightDays = 6 - (int)newMonth.DayOfWeek;
+                var iterations = DateTime.DaysInMonth(month.Year, month.Month) + padLeftDays + padRaightDays;
+                for (int j = 0; j < iterations; j++)
+                {
+                    if (j < padLeftDays)
+                    {
+                        result.Add(prevDay);
+                        prevDay = prevDay.AddDays(1);
+                    }
+                    else
+                    {
+                        result.Add(currentDay);
+                        currentDay = currentDay.AddDays(1);
+                    }
+                }
+            }
+            else
+            {
+                var prevMonth = new DateTime(y - 1, 12, 1);
+                int countPrevMonth = DateTime.DaysInMonth(y - 1, 12);
+                var prevDay = prevMonth.AddDays(countPrevMonth - padLeftDays);
 
-			return result;
-		}
-	}
+                var countMonth = DateTime.DaysInMonth(y, m);
+                var newMonth = new DateTime(y, m, countMonth);
+                var padRaightDays = 6 - (int)newMonth.DayOfWeek;
+                var iterations = DateTime.DaysInMonth(month.Year, month.Month) + padLeftDays + padRaightDays;
+                for (int j = 0; j < iterations; j++)
+                {
+                    if (j < padLeftDays)
+                    {
+                        result.Add(prevDay);
+                        prevDay = prevDay.AddDays(1);
+                    }
+                    else
+                    {
+                        result.Add(currentDay);
+                        currentDay = currentDay.AddDays(1);
+                    }
+                }
+            }
+
+            return result;
+        }
+    }
 }
