@@ -1,0 +1,38 @@
+﻿@model TaskView
+@{
+    ViewData["Title"] = "Tasks";
+}
+
+@foreach (var x in Model.CalendarTasks)
+{
+    <div class="row" style="margin-left:5%; margin-top:20px; margin-right:5%">
+        <div class=" col-1" style=" padding:3px">@x.Date.TimeOfDay</div>
+        <div class="col-10" style="padding:3px">@x.Description</div>
+        <a class="btn btn-danger col-1" asp-action="DeleteTask" asp-controller="Task"
+                asp-route-id="@x.Id"  style=" padding:3px">Delete</a>
+    </div>
+}
+
+<form style="margin-left:5%; margin-top:20px; margin-right:5%" asp-action="AddTask" asp-controller="Task">
+    <div class="form-row">
+        <div class="col">
+            <input type="time" asp-for="Time" class="form-control">
+        </div>
+        <input type="hidden" asp-for="Date" value="@Model.Date" />
+        <div class="col-7">
+            <span asp-validation-for="Description" class="invalid-feedback"></span>
+            <input type="text" asp-for="Description" class="form-control" placeholder="Введите задачу">
+        </div>
+        <div class="col">
+            <button type="submit" class="form-control btn btn-primary">Добавить</button>
+        </div>
+        <div class="col">
+            <a asp-action="Index" asp-controller="Calendar" asp-route-month="@Model.Date.Month" asp-route-year="@Model.Date.Year"
+               class="form-control btn btn-primary">Календарь</a>
+        </div>
+    </div>
+</form>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.10/jquery.validate.unobtrusive.min.js"></script>
+
+
