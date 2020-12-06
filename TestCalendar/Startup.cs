@@ -30,9 +30,12 @@ namespace TestCalendar
         {
             //services.AddControllersWithViews();
 
-            services.AddDbContext <ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration["TestCalendar:ConnectionStrings"]));
+            //services.AddDbContext <ApplicationDbContext>(options =>
+            //    options.UseSqlServer(
+            //        Configuration["TestCalendar:ConnectionStrings"]));
+            
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<ICalendarTaskRepository, CalendarTaskRepository>();
             services.AddTransient<CalendarService>();
