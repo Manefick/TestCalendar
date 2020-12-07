@@ -69,3 +69,9 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+.cItem {
+    width: 13%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center
+}
